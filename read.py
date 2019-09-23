@@ -1,8 +1,8 @@
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-ssvname = "liqucn.ssv"
-market_name = "liqucn"
+ssvname = "playdrone_cset.ssv"
+market_name = "Google play store"
 
 #figure 
 fig_dpi=300
@@ -26,12 +26,16 @@ def plot_virus_categories(data):
     #virus_categories will contain a pair (non infected apps, infected apps) per category
     virus_categories = {}
     for e in data:
-        if e[category_label] not in virus_categories.keys():
-            virus_categories[e[category_label]] = [0,0]
+        categ = e[category_label]
+        if categ[:4] == "GAME":
+            print(categ)
+            categ = "GAMES"
+        if categ not in virus_categories.keys():
+            virus_categories[categ] = [0,0]
         if virus_in_app(e):
-            virus_categories[e[category_label]][1] += 1
+            virus_categories[categ][1] += 1
         else:
-            virus_categories[e[category_label]][0] += 1
+            virus_categories[categ][0] += 1
     y_virus = []
     y_non_virus = []
     y_ratios = []
@@ -61,15 +65,19 @@ def plot_virus_categories(data):
     mng = plt.get_current_fig_manager()
     mng.resize(mng.window.maxsize()[0]/0.9,mng.window.maxsize()[1]/0.9)
     plt.show()
-    fig.savefig("./images/" + market_name +"_infected_cat.png",)
+    fig.savefig("./images/" + market_name +"_infected_cat.png")
 
 def plot_downloads_categories(data):
     down_categories = {}
     for e in data:
         # if int(e['# of detections'])>0:
             # print(e['file name'], " : ", e[detection_label], "/", e["# of AVs that scan the file"])
-        if e[category_label] not in down_categories.keys():
-            down_categories[e[category_label]] = 0
+        categ = e[category_label]
+        if categ[:4] == "GAME":
+            print(categ)
+            categ = "GAMES"
+        if categ not in down_categories.keys():
+            down_categories[categ] = 0
             e_down = e[downloads_label]
             e_down = e_down.replace(",","")
             if e_down.isdigit():
@@ -80,7 +88,7 @@ def plot_downloads_categories(data):
                 D = int(float(e_down[:-1])*1000000)
             else:
                 print(e[downloads_label])
-        down_categories[e[category_label]] += D
+        down_categories[categ] += D
     list_categories = []
     y_downloads = []
     for k in down_categories:
